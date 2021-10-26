@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?, owner: LifecycleOwner) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        getContent = registry.register("key", LifecycleOwner, ActivityResultContracts.GetContent()) { uri ->
+        //getContent = registry.register("key", LifecycleOwner, ActivityResultContracts.GetContent()) { uri ->
             // Handle the returned Uri
         }
     }
@@ -50,8 +50,9 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.openCalendar -> {
-                registry.register("key", owner, GetContent()) { uri ->
+                //registry.register("key", owner, GetContent()) { uri ->
                     // Handle the returned Uri
+                true
                 }
 
 
