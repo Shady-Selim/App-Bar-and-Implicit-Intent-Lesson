@@ -1,31 +1,25 @@
 package com.shady.appbarandimplicitintent
 
+import android.app.Activity
 import android.content.Intent
-import android.icu.util.Calendar.SUNDAY
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import java.util.*
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.LifecycleOwner
 
-
-lateinit var getContent : ActivityResultLauncher<String>
-
-
 class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?, owner: LifecycleOwner) {
+    private val REQUEST_CONTACT = 3
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         //getContent = registry.register("key", LifecycleOwner, ActivityResultContracts.GetContent()) { uri ->
             // Handle the returned Uri
         }
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
@@ -50,15 +44,36 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.openCalendar -> {
-                //registry.register("key", owner, GetContent()) { uri ->
-                    // Handle the returned Uri
+                val contact = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+                startActivityForResult(contact, REQUEST_CONTACT)
                 true
-                }
-
-
+            }
+            R.id.callNumber -> {
+                val contact = Intent(Intent.ACTION_DIAL, Uri.parse("tel:5551234"))
+                startActivity(contact)
                 true
             }
             else -> false
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CONTACT && resultCode == RESULT_OK && data != null) {
+                val contactUri: Uri = data.data!!
+                // Specify which fields you want your query to return values for
+                val queryFields = arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
+                // Perform your query - the contactUri is like a "where" clause here
+                val cursor = this.contentResolver
+                    .query(contactUri, queryFields, null, null, null)
+                cursor?.use {
+                    // Verify cursor contains at least one result
+                    if (it.count == 0) {
+                        return }
+                    // Pull out the first column of the first row of data -
+                    // that is your suspect's name
+                    it.moveToFirst()
+                    Toast.makeText(this, "Contact user name: " + it.getString(0), Toast.LENGTH_LONG).show()
+                }
+        } }
 }

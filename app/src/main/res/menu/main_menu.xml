@@ -12,4 +12,7 @@
     <item android:title="Open Calendar"
         android:id="@+id/openCalendar" android:icon="@drawable/ic_calendar"
         app:showAsAction="always"/>
+    <item android:title="Call Number"
+        android:id="@+id/callNumber" android:icon="@drawable/ic_phone"
+        app:showAsAction="always"/>
 </menu>
